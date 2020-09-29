@@ -1,10 +1,12 @@
-package com.kidd32pl.xml;
+package com.kidd32pl.model;
 
 /**
  * Created by mjozefcz on 26/09/2020.
  */
 public class Result
 {
+
+    public Result(){}
 
     public Result(String id, Integer result)
     {

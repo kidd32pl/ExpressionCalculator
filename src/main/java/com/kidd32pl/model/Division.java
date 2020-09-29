@@ -1,29 +1,16 @@
-package com.kidd32pl.xml;
+package com.kidd32pl.model;
 
-/**
- * Created by mjozefcz on 26/09/2020.
- */
 public class Division extends Operation
 {
     private ICalculable dividend;
     private ICalculable divisor;
 
-    public ICalculable getDividend()
-    {
-        return dividend;
-    }
-
-    public void setDividend(ICalculable dividend)
+    public void addDividend(ICalculable dividend)
     {
         this.dividend = dividend;
     }
 
-    public ICalculable getDivisor()
-    {
-        return divisor;
-    }
-
-    public void setDivisor(ICalculable divisor)
+    public void addDivisor(ICalculable divisor)
     {
         this.divisor = divisor;
     }

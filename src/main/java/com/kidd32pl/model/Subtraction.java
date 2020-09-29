@@ -1,4 +1,4 @@
-package com.kidd32pl.xml;
+package com.kidd32pl.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -9,22 +9,12 @@ public class Subtraction extends Operation
     private ICalculable minuend;
     private ICalculable subtrahend;
 
-    public ICalculable getMinuend()
-    {
-        return minuend;
-    }
-
-    public void setMinuend(ICalculable minuend)
+    public void addMinuend(ICalculable minuend)
     {
         this.minuend = minuend;
     }
 
-    public ICalculable getSubtrahend()
-    {
-        return subtrahend;
-    }
-
-    public void setSubtrahend(ICalculable subtrahend)
+    public void addSubtrahend(ICalculable subtrahend)
     {
         this.subtrahend = subtrahend;
     }

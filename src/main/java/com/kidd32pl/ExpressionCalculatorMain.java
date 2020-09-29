@@ -1,20 +1,21 @@
 package com.kidd32pl;
 
-import com.kidd32pl.xml.Expressions;
-import com.kidd32pl.xml.Result;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -22,18 +23,12 @@ import java.util.stream.Stream;
  */
 public class ExpressionCalculatorMain
 {
-    final static String xml1 = "<expressions>"
-                              + "</expressions>";
+    private static final Logger logger = LogManager.getLogger(ExpressionCalculatorMain.class);
 
-    final static String xml = "<expressions>"
-                       + "  <addition complex=\"true\" id=\"1\">"
-                       + "    <item>1</item>"
-                       + "    <item>2</item>"
-                       + "    <item class=\"addition\"/>"
-                       + "  </addition>"
-                       + "</expressions>";
-    public static void main (String[] args) throws JAXBException
+    public static void main (String[] args)
     {
+        BasicConfigurator.configure();
+
         if (args == null || args.length != 2 )
         {
             printHelp();
@@ -42,29 +37,40 @@ public class ExpressionCalculatorMain
         String inputFolder = args[0];
         String outputFolder = args[1];
 
-        JAXBContext jaxbContext = JAXBContext.newInstance(Expressions.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        ExpressionCalculator expressionCalculator = new ExpressionCalculator();
-
-
         try (Stream<Path> paths = Files.walk(Paths.get(inputFolder))) {
 
             paths.filter(s -> s.getFileName().toString().endsWith(".xml"))
                     .forEach(file -> {
+                        logger.info("Calculating file: " +  file.toString());
 
+                        Document document = null;
+                        SAXReader reader = new SAXReader();
                         try
                         {
-                            System.out.println("Calculating file: " +  file.toString());
-                            Expressions expressions = (Expressions) jaxbUnmarshaller.unmarshal(file.toFile());
-
-                            List<Result> resultList  = expressionCalculator.calculateExpression(expressions);
-
+                            document = reader.read(file.toFile());
                         }
-                        catch (JAXBException e)
+                        catch (DocumentException e)
                         {
                             e.printStackTrace();
                         }
 
+                        ExpressionCalculator expressionCalculator = new ExpressionCalculator(document);
+                        Document result = expressionCalculator.processFile();
+
+                        String fileNameWithOutExt = FilenameUtils.removeExtension(file.toFile().getName());
+                        String outputFile = outputFolder + File.separator + fileNameWithOutExt + "_result.xml";
+
+                        try (FileWriter fileWriter = new FileWriter(outputFile)) {
+                            OutputFormat format = OutputFormat.createPrettyPrint();
+                            format.setSuppressDeclaration(true);
+                            XMLWriter writer = new XMLWriter(fileWriter, format);
+                            writer.write( result );
+                            writer.close();
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
                     });
         }
         catch (Exception e)
@@ -72,17 +78,14 @@ public class ExpressionCalculatorMain
             e.printStackTrace();
         }
 
-
-
-
-
-
-
     }
+
+
 
     private static void printHelp()
     {
         final StringBuilder sb = new StringBuilder();
+        sb.append("\n");
         sb.append("-------------------------------\n");
         sb.append("----- Expression Calculator\n");
         sb.append("-------------------------------\n");
@@ -90,7 +93,7 @@ public class ExpressionCalculatorMain
         sb.append(" Usage: \n");
         sb.append(" java -jar ExpressionCalculator.jar <input_dir_path> <output_dir_path");
 
-        System.out.println(sb.toString());
+        logger.info(sb.toString());
         System.exit(0);
     }
 }

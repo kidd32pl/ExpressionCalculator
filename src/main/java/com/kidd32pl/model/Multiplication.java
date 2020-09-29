@@ -1,30 +1,27 @@
-package com.kidd32pl.xml;
+package com.kidd32pl.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Multiplication extends Operation
 {
+    private List<ICalculable> factors = new ArrayList<>();
+
     public Multiplication(ICalculable... multiplicationValues)
     {
         factors = Arrays.asList(multiplicationValues);
     }
 
-    private List<ICalculable> factors;
+    public Multiplication() {}
 
-    public List<ICalculable> getFactors()
+    public void addFactor(ICalculable factor)
     {
-        return factors;
-    }
-
-    public void setFactors(List<ICalculable> factors)
-    {
-        this.factors = factors;
+        factors.add(factor);
     }
 
     @Override public Integer calculate()
     {
-
         return factors.stream().map(ICalculable::calculate).reduce(1, (a, b) -> a * b);
     }
 }
