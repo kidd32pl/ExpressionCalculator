@@ -1,19 +1,7 @@
 package com.kidd32pl.model;
 
-/**
- * Created by mjozefcz on 26/09/2020.
- */
 public class Result
 {
-
-    public Result(){}
-
-    public Result(String id, Integer result)
-    {
-        this.id = id;
-        this.result = result;
-    }
-
     private String id;
     private Integer result;
 

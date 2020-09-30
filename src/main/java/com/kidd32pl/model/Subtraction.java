@@ -1,9 +1,5 @@
 package com.kidd32pl.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-
-@XmlRootElement
 public class Subtraction extends Operation
 {
     private ICalculable minuend;

@@ -17,7 +17,9 @@ import java.util.List;
 
 public class ExpressionCalculator
 {
-    private Document document;
+    public static final String MODEL_PACKAGE = "com.kidd32pl.model.";
+
+    final private Document document;
 
     private static final Logger logger = LogManager.getLogger(ExpressionCalculator.class);
 
@@ -53,7 +55,10 @@ public class ExpressionCalculator
                         e.printStackTrace();
                     }
 
-                    result.setResult(expressionResult.calculate());
+                    if (expressionResult!= null)
+                    {
+                        result.setResult(expressionResult.calculate());
+                    }
                     results.add(result);
 
                     logger.info("Id: " + result.getId() + " Result: " + result.getResult());
@@ -62,8 +67,7 @@ public class ExpressionCalculator
             }
         }
 
-        Document xmlResult = processResult(results);
-        return xmlResult;
+        return processResult(results);
     }
 
     private Document processResult(List<Result> results)
@@ -85,8 +89,8 @@ public class ExpressionCalculator
             throws Exception
     {
         final String elementName = element.getName();
-        final String className = "com.kidd32pl.model." + elementName.substring(0, 1).toUpperCase() + elementName.substring(1);
-        final Class operationClass = Class.forName(className);
+        final String className = MODEL_PACKAGE + elementName.substring(0, 1).toUpperCase() + elementName.substring(1);
+        final Class<?> operationClass =  Class.forName(className);
         final ICalculable operation = (ICalculable)operationClass.newInstance();
 
         for (int i = 0, size = element.nodeCount(); i < size; i++)

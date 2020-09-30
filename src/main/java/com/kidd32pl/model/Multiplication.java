@@ -13,8 +13,10 @@ public class Multiplication extends Operation
         factors = Arrays.asList(multiplicationValues);
     }
 
+    @SuppressWarnings("unused")
     public Multiplication() {}
 
+    @SuppressWarnings("unused")
     public void addFactor(ICalculable factor)
     {
         factors.add(factor);

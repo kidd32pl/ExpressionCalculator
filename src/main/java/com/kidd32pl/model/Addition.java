@@ -16,6 +16,7 @@ public class Addition extends Operation
         items = Arrays.asList(calculableItems);
     }
 
+    @SuppressWarnings("unused")
     public void addItem(ICalculable item)
     {
         items.add(item);
@@ -23,7 +24,6 @@ public class Addition extends Operation
 
     @Override public Integer calculate()
     {
-
          return items.stream().mapToInt(ICalculable::calculate).sum();
     }
 }

@@ -18,69 +18,67 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-/**
- * Created by mjozefcz on 25/09/2020.
- */
 public class ExpressionCalculatorMain
 {
     private static final Logger logger = LogManager.getLogger(ExpressionCalculatorMain.class);
 
-    public static void main (String[] args)
+    public static void main(String[] args)
     {
         BasicConfigurator.configure();
 
-        if (args == null || args.length != 2 )
+        if (args != null && args.length == 2)
+        {
+            String inputFolder = args[0];
+            String outputFolder = args[1];
+
+            try (Stream<Path> paths = Files.walk(Paths.get(inputFolder)))
+            {
+
+                paths.filter(s -> s.getFileName().toString().endsWith(".xml")).forEach(file -> {
+                    logger.info("Calculating file: " + file.toString());
+
+                    Document document = null;
+                    SAXReader reader = new SAXReader();
+                    try
+                    {
+                        document = reader.read(file.toFile());
+                    }
+                    catch (DocumentException e)
+                    {
+                        logger.error("Couldn't parse the file", e);
+                    }
+
+                    ExpressionCalculator expressionCalculator = new ExpressionCalculator(document);
+                    Document result = expressionCalculator.processFile();
+
+                    String fileNameWithOutExt = FilenameUtils.removeExtension(file.toFile().getName());
+                    String outputFile = outputFolder + File.separator + fileNameWithOutExt + "_result.xml";
+
+                    try (FileWriter fileWriter = new FileWriter(outputFile))
+                    {
+                        OutputFormat format = OutputFormat.createPrettyPrint();
+                        format.setSuppressDeclaration(true);
+                        XMLWriter writer = new XMLWriter(fileWriter, format);
+                        writer.write(result);
+                        writer.close();
+                    }
+                    catch (IOException e)
+                    {
+                        logger.error("Exception on saving results ", e);
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
         {
             printHelp();
         }
 
-        String inputFolder = args[0];
-        String outputFolder = args[1];
-
-        try (Stream<Path> paths = Files.walk(Paths.get(inputFolder))) {
-
-            paths.filter(s -> s.getFileName().toString().endsWith(".xml"))
-                    .forEach(file -> {
-                        logger.info("Calculating file: " +  file.toString());
-
-                        Document document = null;
-                        SAXReader reader = new SAXReader();
-                        try
-                        {
-                            document = reader.read(file.toFile());
-                        }
-                        catch (DocumentException e)
-                        {
-                            e.printStackTrace();
-                        }
-
-                        ExpressionCalculator expressionCalculator = new ExpressionCalculator(document);
-                        Document result = expressionCalculator.processFile();
-
-                        String fileNameWithOutExt = FilenameUtils.removeExtension(file.toFile().getName());
-                        String outputFile = outputFolder + File.separator + fileNameWithOutExt + "_result.xml";
-
-                        try (FileWriter fileWriter = new FileWriter(outputFile)) {
-                            OutputFormat format = OutputFormat.createPrettyPrint();
-                            format.setSuppressDeclaration(true);
-                            XMLWriter writer = new XMLWriter(fileWriter, format);
-                            writer.write( result );
-                            writer.close();
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    });
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
     }
-
-
 
     private static void printHelp()
     {
