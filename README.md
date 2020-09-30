@@ -1,18 +1,18 @@
-#Expression Calculator
+**Expression Calculator**
 
 To compile project use:
 
-'''
+```
 mvn clean install
-'''
+```
 
 To run application:
 
-'''
+```
 java -jar ExpressionCalculator.jar <input_path> <output_path>
- input_path - path to the input files folder
- output_path - path to output files folder
-'''
+ - input_path - path to the input files folder
+ - output_path - path to output files folder
+```
 
 You should be able to add your own classes for expressions if you will follow some basic rules:
 - your class will implement interface ICalculable
