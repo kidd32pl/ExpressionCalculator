@@ -42,11 +42,11 @@ public class ExpressionCalculatorTest extends XMLTestCase
 
     public void testNordeaSimpleCase() throws SAXException, IOException
     {
-        Document document = getDocument("simple.xml");
+        Document document = getDocument("input/simple.xml");
 
         Document documentResult = new ExpressionCalculator(document).processFile();
 
-        Document expectedResult = getDocument("simple_result.xml");
+        Document expectedResult = getDocument("output/simple_result.xml");
 
         XMLUnit.setIgnoreWhitespace(true);
 
@@ -56,11 +56,11 @@ public class ExpressionCalculatorTest extends XMLTestCase
 
     public void testNordeaComplexCase() throws SAXException, IOException
     {
-        Document document = getDocument("complex.xml");
+        Document document = getDocument("input/complex.xml");
 
         Document documentResult = new ExpressionCalculator(document).processFile();
 
-        Document expectedResult = getDocument("complex_result.xml");
+        Document expectedResult = getDocument("output/complex_result.xml");
 
         XMLUnit.setIgnoreWhitespace(true);
 
