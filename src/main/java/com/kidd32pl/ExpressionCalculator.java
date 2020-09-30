@@ -27,6 +27,10 @@ public class ExpressionCalculator
         this.document = document;
     }
 
+    /** Processing expressions in xml document
+     *
+     * @return
+     */
     public Document processFile()
     {
         List<Result> results = new ArrayList<>();
@@ -70,21 +74,13 @@ public class ExpressionCalculator
         return processResult(results);
     }
 
-    private Document processResult(List<Result> results)
-    {
-        Document document = DocumentHelper.createDocument();
-        Element root = document.addElement("expressions");
-
-        for (Result result:results)
-        {
-            root.addElement("result")
-                    .addAttribute("id", result.getId())
-                    .addText(result.getResult().toString());
-        }
-
-        return document;
-    }
-
+    /**
+     * Process single operation and calculate result
+     *
+     * @param element
+     * @return
+     * @throws Exception
+     */
     private ICalculable processOperation(Element element)
             throws Exception
     {
@@ -126,6 +122,27 @@ public class ExpressionCalculator
         }
 
         return operation;
+    }
+
+    /**
+     * Preparing XML document with the results
+     *
+     * @param results
+     * @return
+     */
+    private Document processResult(List<Result> results)
+    {
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("expressions");
+
+        for (Result result:results)
+        {
+            root.addElement("result")
+                    .addAttribute("id", result.getId())
+                    .addText(result.getResult().toString());
+        }
+
+        return document;
     }
 
 }
